@@ -11,9 +11,9 @@ import java.util.List;
 
 class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
-    private List<String> movies;
+    private List<Movie> movies;
 
-    MovieListAdapter(List<String> movies) {
+    MovieListAdapter(List<Movie> movies) {
         this.movies = movies;
     }
 
@@ -28,7 +28,7 @@ class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int position) {
         View movieView = movieViewHolder.itemView;
         TextView movieContent = movieView.findViewById(R.id.tv_movie);
-        movieContent.setText(this.movies.get(position));
+        movieContent.setText(this.movies.get(position).getTitle());
     }
 
     @Override

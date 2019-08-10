@@ -20,10 +20,7 @@ public class MainActivity extends AppCompatActivity {
         this.movieList = findViewById(R.id.rv_movie_list);
         this.movieList.setLayoutManager(new GridLayoutManager(this, 2));
 
-        List<String> movies = new ArrayList<>();
-        movies.add("Hello");
-        movies.add("World");
-        movies.add("Pineapple");
-        this.movieList.setAdapter(new MovieListAdapter(movies));
+        MovieDBService movieService = new MovieDBService(this);
+        this.movieList.setAdapter(new MovieListAdapter(movieService.getMovies(MovieDBService.SortBy.MOST_POPULAR)));
     }
 }
