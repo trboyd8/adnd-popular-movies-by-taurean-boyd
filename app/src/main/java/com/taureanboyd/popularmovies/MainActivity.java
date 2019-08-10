@@ -4,19 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         this.movieGrid = findViewById(R.id.rv_movie_list);
         this.movieGrid.setLayoutManager(new GridLayoutManager(this, 2));
 
-        this.movieAdapter = new MovieListAdapter();
+        this.movieAdapter = new MovieListAdapter(this);
         this.movieGrid.setAdapter(movieAdapter);
 
         getMovies(SortBy.MOST_POPULAR);

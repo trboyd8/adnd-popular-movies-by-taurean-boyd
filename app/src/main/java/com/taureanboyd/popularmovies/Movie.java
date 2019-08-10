@@ -1,5 +1,6 @@
 package com.taureanboyd.popularmovies;
 
+import android.os.Parcel;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,6 +17,8 @@ import static android.content.ContentValues.TAG;
  * This class represents the details of a movie from the Movie DB.
  */
 public class Movie {
+
+    private static final String POSTER_BASE_URL = "https://image.tmdb.org/t/p/w185";
     private int voteCount;
     private int id;
     private boolean video;
@@ -31,6 +34,28 @@ public class Movie {
     private String overview;
     private Date releaseDate;
 
+    public Movie() {
+    }
+
+    public Movie(Parcel movieAsParcel) throws ParseException {
+        if (movieAsParcel != null) {
+            this.voteCount = movieAsParcel.readInt();
+            this.id = movieAsParcel.readInt();
+            this.video = movieAsParcel.readInt() == 1;
+            this.voteAverage = movieAsParcel.readDouble();
+            this.title = movieAsParcel.readString();
+            this.popularity = movieAsParcel.readDouble();
+            this.posterPath = movieAsParcel.readString();
+            this.originalLanguage = movieAsParcel.readString();
+            this.originalTitle = movieAsParcel.readString();
+            movieAsParcel.readIntArray(genreIds);
+            this.backdropPath = movieAsParcel.readString();
+            this.isAdult = movieAsParcel.readInt() == 1;
+            this.overview = movieAsParcel.readString();
+            this.releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(movieAsParcel.readString());
+        }
+    }
+
     public static Movie fromJSONObject(JSONObject jsonObject) {
         try {
             Movie movie = new Movie();
@@ -39,13 +64,13 @@ public class Movie {
             movie.setVideo(jsonObject.getBoolean("video"));
             movie.setVoteAverage(jsonObject.getDouble("vote_average"));
             movie.setTitle(jsonObject.getString("title"));
-            movie.setPosterPath(jsonObject.getString("poster_path"));
+            movie.setPosterPath(String.format("%s%s", POSTER_BASE_URL, jsonObject.getString("poster_path")));
             movie.setOriginalLanguage(jsonObject.getString("original_language"));
             movie.setOriginalTitle(jsonObject.getString("original_title"));
             movie.setBackdropPath(jsonObject.getString("backdrop_path"));
             movie.setAdult(jsonObject.getBoolean("adult"));
             movie.setOverview(jsonObject.getString("overview"));
-            movie.setReleaseDate(new SimpleDateFormat("YYYY-MM-DD").parse(jsonObject.getString("release_date")));
+            movie.setReleaseDate(new SimpleDateFormat("yyyy-MM-dd").parse(jsonObject.getString("release_date")));
 
             JSONArray genreIdsJSON = jsonObject.getJSONArray("genre_ids");
             int[] genreIds = new int[genreIdsJSON.length()];
@@ -178,5 +203,18 @@ public class Movie {
 
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(this.voteCount);
+        parcel.writeInt(this.id);
+        parcel.writeInt(this.video ? 1 : 0);
+        parcel.writeDouble(this.voteAverage);
+        parcel.writeString(this.title);
+        parcel.writeDouble(this.popularity);
     }
 }
