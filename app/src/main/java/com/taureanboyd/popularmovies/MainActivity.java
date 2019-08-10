@@ -4,23 +4,56 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView movieList;
+    private RecyclerView movieGrid;
+    private MovieListAdapter movieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.movieList = findViewById(R.id.rv_movie_list);
-        this.movieList.setLayoutManager(new GridLayoutManager(this, 2));
+        this.movieGrid = findViewById(R.id.rv_movie_list);
+        this.movieGrid.setLayoutManager(new GridLayoutManager(this, 2));
 
-        MovieDBService movieService = new MovieDBService(this);
-        this.movieList.setAdapter(new MovieListAdapter(movieService.getMovies(MovieDBService.SortBy.MOST_POPULAR)));
+        this.movieAdapter = new MovieListAdapter();
+        this.movieGrid.setAdapter(movieAdapter);
+
+        getMovies(SortBy.MOST_POPULAR);
+    }
+
+    private void getMovies(SortBy sortBy) {
+        DownloadAndParseTask task = new DownloadAndParseTask(this, this.movieAdapter);
+        task.execute(sortBy);
+    }
+
+    public enum SortBy {
+        MOST_POPULAR("popular"),
+        HIGHEST_RATED("top_rated");
+
+        private String path;
+
+        SortBy(String path) {
+            this.path = path;
+        }
+
+        String getPath() {
+            return this.path;
+        }
     }
 }

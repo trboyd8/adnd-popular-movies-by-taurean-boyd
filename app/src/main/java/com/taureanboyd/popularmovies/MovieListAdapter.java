@@ -7,14 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     private List<Movie> movies;
 
-    MovieListAdapter(List<Movie> movies) {
-        this.movies = movies;
+    public MovieListAdapter() {
+        this.movies = new ArrayList<Movie>();
     }
 
     @NonNull
@@ -34,5 +35,9 @@ class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override
     public int getItemCount() {
         return movies.size();
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
     }
 }

@@ -1,5 +1,7 @@
 package com.taureanboyd.popularmovies;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,6 +9,8 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * This class represents the details of a movie from the Movie DB.
@@ -30,7 +34,7 @@ public class Movie {
     public static Movie fromJSONObject(JSONObject jsonObject) {
         try {
             Movie movie = new Movie();
-            movie.setVoteCount(jsonObject.getInt("voteCount"));
+            movie.setVoteCount(jsonObject.getInt("vote_count"));
             movie.setId(jsonObject.getInt("id"));
             movie.setVideo(jsonObject.getBoolean("video"));
             movie.setVoteAverage(jsonObject.getDouble("vote_average"));
@@ -49,13 +53,18 @@ public class Movie {
                 genreIds[i] = genreIdsJSON.getInt(i);
             }
             movie.setGenreIds(genreIds);
+
+            return movie;
         }
         catch (JSONException ex) {
+            Log.w(TAG, "fromJSONObject: Failed to parse the movie details", ex);
             // TODO: What to do here?
         }
         catch (ParseException ex) {
+            Log.w(TAG, "fromJSONObject: Failed to parse the movie details", ex);
             // TODO: What to do here?
         }
+
         return null;
     }
 
