@@ -1,6 +1,6 @@
 package com.taureanboyd.popularmovies;
 
-import android.content.Context;
+import android.app.LauncherActivity;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,14 +14,24 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
+class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
 
-    private Context context;
+    private ListItemClickListener listener;
     private List<Movie> movies;
 
-    public MovieListAdapter(Context context) {
-        this.context = context;
-        this.movies = new ArrayList<Movie>();
+    public MovieListAdapter(ListItemClickListener listener) {
+        this.movies = new ArrayList<>();
+        this.listener = listener;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+        this.notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemCount() {
+        return movies.size();
     }
 
     @NonNull
@@ -35,19 +45,27 @@ class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int position) {
         Movie movie = this.movies.get(position);
         View movieView = movieViewHolder.itemView;
+        movieView.setOnClickListener(movieViewHolder);
 
         ImageView moviePoster = movieView.findViewById(R.id.iv_poster);
-        Picasso.with(this.context)
+        Picasso.with(movieView.getContext())
                 .load(Uri.parse(movie.getPosterPath()))
                 .into(moviePoster);
     }
 
-    @Override
-    public int getItemCount() {
-        return movies.size();
+    class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        MovieViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void onClick(View itemView) {
+            listener.onClick(movies.get(getAdapterPosition()));
+        }
     }
 
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
+    interface ListItemClickListener {
+        void onClick(Movie movie);
     }
 }

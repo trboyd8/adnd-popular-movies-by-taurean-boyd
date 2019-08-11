@@ -1,11 +1,12 @@
 package com.taureanboyd.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieListAdapter.ListItemClickListener {
 
     private RecyclerView movieGrid;
     private MovieListAdapter movieAdapter;
@@ -42,5 +43,12 @@ public class MainActivity extends AppCompatActivity {
         String getPath() {
             return this.path;
         }
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Intent switchToDetailActivityIntent = new Intent(this, DetailActivity.class);
+        switchToDetailActivityIntent.putExtra(Intent.EXTRA_TEXT, movie);
+        startActivity(switchToDetailActivityIntent);
     }
 }

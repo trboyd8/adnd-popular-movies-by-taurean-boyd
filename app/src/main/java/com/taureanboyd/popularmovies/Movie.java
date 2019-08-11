@@ -1,6 +1,7 @@
 package com.taureanboyd.popularmovies;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,7 +17,7 @@ import static android.content.ContentValues.TAG;
 /**
  * This class represents the details of a movie from the Movie DB.
  */
-public class Movie {
+public class Movie implements Parcelable {
 
     private static final String POSTER_BASE_URL = "https://image.tmdb.org/t/p/w185";
     private int voteCount;
@@ -37,7 +38,7 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(Parcel movieAsParcel) throws ParseException {
+    public Movie(Parcel movieAsParcel) {
         if (movieAsParcel != null) {
             this.voteCount = movieAsParcel.readInt();
             this.id = movieAsParcel.readInt();
@@ -52,7 +53,12 @@ public class Movie {
             this.backdropPath = movieAsParcel.readString();
             this.isAdult = movieAsParcel.readInt() == 1;
             this.overview = movieAsParcel.readString();
-            this.releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(movieAsParcel.readString());
+            try {
+                this.releaseDate = new SimpleDateFormat("yyyy-MM-dd").parse(movieAsParcel.readString());
+            }
+            catch (ParseException ex) {
+                Log.w(TAG, "Movie: Failed to parse date.", ex);
+            }
         }
     }
 
@@ -205,10 +211,12 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeInt(this.voteCount);
         parcel.writeInt(this.id);
@@ -216,5 +224,24 @@ public class Movie {
         parcel.writeDouble(this.voteAverage);
         parcel.writeString(this.title);
         parcel.writeDouble(this.popularity);
+        parcel.writeString(this.posterPath);
+        parcel.writeString(this.originalLanguage);
+        parcel.writeString(this.originalTitle);
+        parcel.writeIntArray(this.genreIds);
+        parcel.writeString(this.backdropPath);
+        parcel.writeInt(this.isAdult ? 1: 0);
+        parcel.writeString(this.overview);
+        parcel.writeString(new SimpleDateFormat("yyyy-MM-dd").format(this.releaseDate));
     }
+
+    public static final Parcelable.Creator<Movie> CREATOR
+            = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }
